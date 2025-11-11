@@ -22,13 +22,13 @@ favicon: https://raw.githubusercontent.com/FromEndWorld/LOFFER/master/images/fav
 
 # 菜单中的按钮
 navigation:
-  - name: home
+  - name: Home
     url: /
-  - name: about
+  - name: About
     url: /about
-  - name: archive
+  - name: Archive
     url: /archive
-  - name: tags
+  - name: Tags
     url: /tags
 
 # 每页的文章数

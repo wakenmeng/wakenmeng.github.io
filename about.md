@@ -5,7 +5,7 @@ permalink: /about/
 ---
 # About Me
 
-My name is Waken Meng.  
+My name is Weikang Meng. My friends call me Waken. 
 I’m a backend engineer and co-founder with ten years of experience in system design and large-scale backend development. My work focuses on building high-performance, distributed services that are stable, maintainable, and scalable.  
 
 I’m currently pursuing an MBA in Finance at Indiana State University’s Scott College of Business, where I’m combining my technical background with a deep understanding of business and finance. My goal is to design and lead projects that bridge engineering and strategy — turning data and systems into decisions that create real value.

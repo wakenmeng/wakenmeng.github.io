@@ -33,7 +33,7 @@ survive until something worse happened.
 
 ------------------------------------------------------------------------
 
-## Why There's No `isClosed`
+## Why There's No isClosed
 
 You'll sometimes see people wishing for:
 
@@ -51,9 +51,9 @@ The only real solution is serialization.
 
 ------------------------------------------------------------------------
 
-## How to Correctly Check if a Channel `isClosed`
+## How to Correctly Check if a Channel isClosed
 
-Closing a channel will sent a `_, false` message to it, and you get this message every time you read a closed channel. And we can use this to check if a channel is closed. 
+Closing a channel will sent a `_, false` message to it, and you get this message every time you read a closed channel. And we can use this to check if a channel is closed. Pay attention on the channel type, it's receive-only, means we shouldn't check and close a channel like mentioned above. 
 
 ```go
 func isClosed(ch <- chan struct{}) bool {

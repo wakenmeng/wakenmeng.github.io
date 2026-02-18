@@ -51,6 +51,23 @@ The only real solution is serialization.
 
 ------------------------------------------------------------------------
 
+## How to Correctly Check if a Channel `isClosed`
+
+Closing a channel will sent a `_, false` message to it, and you get this message every time you read a closed channel. And we can use this to check if a channel is closed. 
+
+```go
+func isClosed(ch <- chan struct{}) bool {
+	select {
+	case <- ch:
+		return true
+	default:
+		return false
+	}
+}
+```
+
+------------------------------------------------------------------------
+
 ## Single Producer: Easy Case
 
 If one goroutine produces values, it owns the close. That's the clean

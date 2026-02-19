@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Lua in Redis: RateLimiter Example"
-date: 2025-02-19
+date: 2026-02-19
 author: Waken
 tags: [redis, lua, backend, ratelimit]
 ---

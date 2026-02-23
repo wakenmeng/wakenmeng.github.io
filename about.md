@@ -12,15 +12,15 @@ I completed my MBA degree at the Scott College of Business. My goal is to design
 
 ## Professional Experience
 
-**WebPilot.ai — Co-founder & Lead Engineer**  
+**WebPilot.ai — Co-founder & Lead Backend Engineer**  
 *2023 – 2026*  
 I helped design and scale an AI-driven platform powered by large language models, which reached over two million users within two years. I led development across system architecture, AI agent deployment, and product integration, enabling fast iterations and a reliable backend that supported rapid growth.
 
-**Guangzhou Moblin Technology — Co-founder & VP of Engineering**  
+**Guangzhou Moblin Technology — Co-founder & Senior Engineer**  
 *2017 – 2023*  
 Led the development of high-traffic platforms serving over five million users. My role covered architecture planning, DevOps, client communication, and project management. Working in a startup setting taught me how to balance stability with innovation and how small teams can deliver enterprise-level products through focus and trust.
 
-**Beijing Binke Technology — Project Manager & Engineer**  
+**Beijing Binke Technology — Project Manager & Core Engineer**  
 *2016 – 2017*  
 Managed and built backend services for a mobile app that reached over half a million users within a month of launch. Oversaw project execution and coordinated a small engineering team.
 

@@ -5,8 +5,10 @@ permalink: /about/
 ---
 
 My name is Weikang Meng. My friends call me Waken.  
-I’m a backend engineer and co-founder with ten years of experience in system design and large-scale backend development. My work focuses on building high-performance, distributed services that are stable, maintainable, and scalable.  
-I completed my MBA degree at the Scott College of Business. My goal is to design and lead projects that bridge engineering and strategy — turning data and systems into decisions that create real value.
+
+I’m a backend engineer with 10 years of experience building scalable distributed systems. I started at Alibaba working on high-traffic social platforms, focusing on reliability and system design. More recently, I co-founded WebPilot, where I led the backend architecture, user systems, payments, and AI agent infrastructure, and we served over 2 million users in two years. I mainly work in Go and Python, and I’m strongest in designing services at scale, API platforms, AI-driven services and production operations. Now I’m looking for a backend or platform role where I can own systems end-to-end and drive impact at scale.
+
+I just completed my MBA degree. 
 
 ---
 

@@ -12,6 +12,15 @@ I just completed my MBA degree.
 
 ---
 
+## Contact
+
+- LinkedIn: [Weikang Meng](https://www.linkedin.com/in/weikang-meng/)  
+- Github: [wakenmeng](https://www.github.com/wakenmeng/)  
+- X(Twitter): [@wakenmeng](https://x.com/wakenmeng)  
+
+---
+
+
 ## Professional Experience
 
 **WebPilot.ai — Co-founder & Lead Backend Engineer**
@@ -50,14 +59,3 @@ Top-ranked engineering university in China. Worked as a research assistant on a 
 I approach my work with patience and clarity — I believe that strong systems, like strong teams, are built through consistency and understanding. I value honesty, craftsmanship, and learning that lasts longer than the latest framework.
 
 Outside of work, I enjoy early mornings, table tennis, hiking, and traveling. These activities help me stay balanced, focused, and curious — traits I try to carry into both my work and relationships.
-
----
-
-## Contact
-
-- Website: [waken.dev](https://waken.dev)
-- X(Twitter): [@wakenmeng](https://x.com/wakenmeng)
-
----
-
-*"Build clearly, think deeply, and stay kind."*

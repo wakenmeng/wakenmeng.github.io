@@ -1,10 +1,8 @@
 ---
-layout: post
 title: "Disabling Laptop Built-in Keyboard with xinput"
 date: 2023-05-02
 author: Waken
 tags: [linux, xinput, keyboard]
-comments: true
 ---
 
 Needed to disable my laptop's built-in keyboard when using an external one. Found a simple xinput solution.

@@ -1,10 +1,8 @@
 ---
-layout: post
 title: "How to Clear Emacs Elfeed Database"
 date: 2022-09-21
 author: Waken
 tags: [emacs, elfeed, rss]
-comments: true
 ---
 
 Elfeed (RSS reader for Emacs) was showing way too many old entries. Here's how to clear it.

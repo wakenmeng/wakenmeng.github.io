@@ -1,10 +1,8 @@
 ---
-layout: post
 title: "Latency Numbers Worth Knowing"
 date: 2022-10-08
 author: Waken
 tags: [performance, systems]
-comments: true
 ---
 
 Came across [this classic post](https://surana.wordpress.com/2009/01/01/numbers-everyone-should-know/) about computer performance numbers. Really puts things in perspective.

@@ -1,10 +1,8 @@
 ---
-layout: post
 title: "Fixing Org-roam Database Query Timeout in Emacs 29"
 date: 2024-02-29
 author: Waken
 tags: [emacs, org-roam, sqlite, productivity, troubleshooting]
-comments: true
 toc: true
 ---
 

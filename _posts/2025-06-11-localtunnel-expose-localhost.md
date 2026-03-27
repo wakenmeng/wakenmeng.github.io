@@ -1,10 +1,8 @@
 ---
-layout: post
 title: "LocalTunnel: Quick HTTPS Tunnel to Localhost"
 date: 2025-06-11
 author: Waken
 tags: [localtunnel, https, tunneling, development]
-comments: true
 ---
 
 Needed to share my local dev server externally. LocalTunnel made it instant.

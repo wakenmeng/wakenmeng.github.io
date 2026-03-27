@@ -1,10 +1,8 @@
 ---
-layout: post
 title: "Setting Up Rime Input Method on Arch Linux"
 date: 2024-04-02
 author: Waken
 tags: [linux, rime, arch-linux, chinese-input]
-comments: true
 ---
 
 Switched to Rime for Chinese input on Arch Linux. Here's my setup with the rime-ice dictionary.

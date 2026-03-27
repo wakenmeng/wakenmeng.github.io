@@ -1,10 +1,8 @@
 ---
-layout: post
 title: "Bluetooth on macOS: AAC vs SBC Codec Stability"
 date: 2025-02-13
 author: Waken
 tags: [bluetooth, macos, audio, codecs]
-comments: true
 ---
 
 Had Bluetooth audio dropouts with my Sony speaker. Switching from AAC to SBC fixed it.

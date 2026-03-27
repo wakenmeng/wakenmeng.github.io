@@ -1,10 +1,8 @@
 ---
-layout: post
 title: "Docker BuildX: When Cache Goes Wrong"
 date: 2024-11-15
 author: Waken
 tags: [docker, buildx, devops]
-comments: true
 ---
 
 Had a weird Docker issue today. Image built successfully but ran old code. Turned out to be stale cache layers.

@@ -1,101 +1,149 @@
-# Welcome to Jekyll!
-#
-# This config file is meant for settings that affect your whole blog, values
-# which you are expected to set up once and rarely edit after that. If you find
-# yourself editing this file very often, consider using Jekyll's data files
-# feature for the data you need to update frequently.
-#
-# For technical reasons, this file is *NOT* reloaded automatically when you use
-# 'bundle exec jekyll serve'. If you change this file, please restart the server process.
-#
-# If you need help with YAML syntax, here are some quick references for you:
-# https://learn-the-web.algonquindesign.ca/topics/markdown-yaml-cheat-sheet/#yaml
-# https://learnxinyminutes.com/docs/yaml/
-#
-# Site settings
-# These are used to personalize your new site. If you look in the HTML files,
-# you will see them accessed via {{ site.title }}, {{ site.email }}, and so on.
-# You can create any custom variable you would like, and they will be accessible
-# in the templates via {{ site.myvariable }}.
+# The Site Configuration
+# Import the theme
+theme: jekyll-theme-chirpy
 
-# Build settings
-#theme: minima
-#theme: garth-jekyll-theme
+# The language of the webpage
+lang: en
 
-# Exclude from processing.
-# The following items will not be processed, by default.
-# Any item listed under the `exclude:` key here will be automatically added to
-# the internal "default list".
-#
-# Excluded items can be processed by explicitly listing the directories or
-# their entries' file path in the `include:` list.
-#
-# exclude:
-#   - .sass-cache/
-#   - .jekyll-cache/
-#   - gemfiles/
-#   - Gemfile
-#   - Gemfile.lock
-#   - node_modules/
-#   - vendor/bundle/
-#   - vendor/cache/
-#   - vendor/gems/
-#   - vendor/ruby/
-exclude:
-  - README.md
-  - CODE_OF_CONDUCT.md
-  - CONTRIBUTING.md
-  - screenshot.png
-  - LICENSE
-  - CNAME
-  - Gemfile
-  - Gemfile.lock
-  - garth-jekyll-theme.gemspec
+# Change to your timezone
+timezone: Europe/London
 
-# 2. Installed Gems
-plugins:
-  - jekyll-paginate
-#  - jekyll-remote-theme
+# jekyll-seo-tag settings
+title: Waken Dev
+tagline: Backend Engineer | Distributed Systems | AI Infrastructure
+description: >-
+  Tech blog by Waken Meng — backend engineering, distributed systems,
+  Go, Rust, and building things at scale.
 
-# 3. Gem settings
-paginate: 3 # jekyll-paginate > items per page
-paginate_path: page:num # jekyll-paginate > blog page
+# Fill in the protocol & hostname for your site.
+url: "https://www.waken.dev"
+baseurl: ""
 
-# 4. Jekyll settings
-sass:
-  style: compressed # Style compression
-permalink: pretty # Permalink style (/YYYY/MM/DD/page-name/)
-excerpt_separator: <!-- more --> # Marks end of excerpt in posts
-timezone: Europe/London # Timezone for blog posts and alike
+github:
+  username: wakenmeng
 
-# 5. Collections
+twitter:
+  username: wakenmeng
+
+social:
+  name: Waken Meng
+  links:
+    - https://github.com/wakenmeng
+    - https://twitter.com/wakenmeng
+
+# Site Verification Settings
+webmaster_verifications:
+  google:
+  bing:
+  alexa:
+  yandex:
+  baidu:
+  facebook:
+
+# Web Analytics Settings
+analytics:
+  google:
+    id:
+  goatcounter:
+    id:
+
+# Prefer color scheme setting.
+# Leave empty will follow the system prefer color scheme.
+# Available options: light, dark
+theme_mode:
+
+# The CDN endpoint for media resources.
+# Notice that once it is assigned, the CDN url
+# will be added to all media resources (site avatar, posts' images, etc.)
+cdn:
+
+# the avatar on sidebar, support local or CORS resources
+avatar: /assets/logo.png
+
+# The URL of the site-wide social preview image used in SEO `og:image` meta tag.
+social_preview_image:
+
+# boolean type, the global switch for TOC in posts.
+toc: true
+
+comments:
+  provider:
+
+# Self-hosted static assets, optional
+assets:
+  self_host:
+    enabled:
+    env:
+
+pwa:
+  enabled: false
+
+paginate: 10
+
+# The base URL of your site
+# If you're using a custom domain, make sure to add it to the `url` field
+
+# ------------ The following options are not recommended to be modified ------------------
+
+kramdown:
+  footnote_backlink: "&#8617;&#xfe0e;"
+  syntax_highlighter: rouge
+  syntax_highlighter_opts:
+    css_class: highlight
+    span:
+      line_numbers: false
+    block:
+      line_numbers: true
+      start_line: 1
+
 collections:
-  posts:
-    title: Blog # Needed for Siteleaf
+  tabs:
     output: true
-    description: "Hi, find out more [about me](about)" # The post list page content
+    sort_by: order
 
-# 6. Jekyll collections settings
 defaults:
-  - scope:
-      path: ""
-      type: pages
-    values:
-      layout: page # Default layout
   - scope:
       path: ""
       type: posts
     values:
-      layout: post # Default layout
+      layout: post
+      comments: true
+      toc: true
+      permalink: /posts/:title/
+  - scope:
+      path: _tabs
+      type: tabs
+    values:
+      layout: page
+      permalink: /:title/
 
-# 7. Site settings
-encoding: utf-8 # Make sure the encoding is right
-title: "Waken Dev" # Site name or title
-logo: "/assets/logo.png" # Site logo
-# favicon: "/favicon.ico" # Uncomment to add custom favicon, or leave as is to use site logo
-description: "Hi, welcome to my blog." # Site description and default description
-lang: en-GB
-baseurl: "" # the subpath of your site, e.g. /blog
-url: "https://www.waken.dev" # the base hostname & protocol for your site, e.g. http://example.com
-twitter_username: wakenmeng
-github_username: wakenmeng
+sass:
+  style: compressed
+
+compress_html:
+  clippings: all
+  comments: all
+  endings: all
+  profile: false
+  blanklines: false
+  ignore:
+    envs: [development]
+
+exclude:
+  - "*.gem"
+  - "*.gemspec"
+  - docs
+  - tools
+  - README.md
+  - LICENSE
+  - "*.config.js"
+  - package*.json
+
+jekyll-archives:
+  enabled: [categories, tags]
+  layouts:
+    category: category
+    tag: tag
+  permalinks:
+    tag: /tags/:name/
+    category: /categories/:name/

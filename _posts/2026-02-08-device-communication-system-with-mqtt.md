@@ -1,10 +1,8 @@
 ---
-layout: post
 title: Command Semantics over MQTT
 date: 2026-02-08
 Author: Waken
 tags: [mqtt]
-comments: true
 toc: true
 ---
 The hardest problem in device communication over MQTT is not delivery. It is semantic consistency under concurrency. Once you scale beyond a single service instance and a single stable device connection, three things become unavoidable: Messages are duplicated; they arrive late; state transitions race.

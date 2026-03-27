@@ -1,10 +1,8 @@
 ---
-layout: post
 title: "Rate Limiting: Leaky Bucket vs Token Bucket"
 date: 2022-07-27
 author: Waken
 tags: [algorithms, rate-limiting, golang]
-comments: true
 ---
 
 Been looking into rate limiting for calling third-party APIs. Two main algorithms keep coming up: Leaky Bucket and Token Bucket. Here's what I learned.

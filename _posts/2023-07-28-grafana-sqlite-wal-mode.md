@@ -1,10 +1,8 @@
 ---
-layout: post
 title: "Speeding Up Grafana with SQLite WAL Mode"
 date: 2023-07-28
 author: Waken
 tags: [grafana, sqlite, performance]
-comments: true
 ---
 
 Grafana was feeling sluggish. Enabled SQLite WAL mode and noticed immediate improvement.

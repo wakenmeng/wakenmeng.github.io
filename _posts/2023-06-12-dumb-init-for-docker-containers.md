@@ -1,10 +1,8 @@
 ---
-layout: post
 title: "dumb-init: Simple Init System for Docker"
 date: 2023-06-12
 author: Waken
 tags: [docker, containers, init, process-management]
-comments: true
 ---
 
 Discovered dumb-init for handling process signals properly in Docker containers.

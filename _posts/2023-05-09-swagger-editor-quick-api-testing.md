@@ -1,10 +1,8 @@
 ---
-layout: post
 title: "Swagger Editor for Quick API Testing"
 date: 2023-05-09
 author: Waken
 tags: [api, swagger, openapi, tools]
-comments: true
 ---
 
 Found Swagger Editor useful for quickly visualizing and testing API specs.

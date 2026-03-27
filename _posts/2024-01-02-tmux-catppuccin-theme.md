@@ -1,10 +1,8 @@
 ---
-layout: post
 title: "tmux: Catppuccin Theme Setup"
 date: 2024-01-02
 author: Waken
 tags: [tmux, theme, terminal]
-comments: true
 ---
 
 Found a nice tmux theme and programming font combination.

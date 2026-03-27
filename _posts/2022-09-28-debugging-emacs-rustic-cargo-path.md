@@ -1,10 +1,8 @@
 ---
-layout: post
 title: "Debugging Emacs rustic-mode: Cannot Find Cargo"
 date: 2022-09-28
 author: Waken
 tags: [emacs, rust, debugging]
-comments: true
 ---
 
 Spent hours debugging why `rustic-format-buffer` wasn't working in Emacs. The error? "Program not found: No such file or directory, cargo"

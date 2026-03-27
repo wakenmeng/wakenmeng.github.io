@@ -1,10 +1,8 @@
 ---
-layout: post
 title: "rust-analyzer: Manually Reloading Workspace"
 date: 2022-10-01
 author: Waken
 tags: [rust, emacs, lsp, rust-analyzer]
-comments: true
 ---
 
 rust-analyzer wasn't picking up my Cargo.toml changes. Had to reload manually.

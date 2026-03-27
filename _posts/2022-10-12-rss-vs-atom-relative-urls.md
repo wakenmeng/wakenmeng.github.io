@@ -1,10 +1,8 @@
 ---
-layout: post
 title: "RSS 2.0 vs Atom: The Relative URL Problem"
 date: 2022-10-12
 author: Waken
 tags: [rss, atom, web]
-comments: true
 ---
 
 Was reading about RSS vs Atom feed formats. Found out RSS 2.0 has a fundamental problem with relative URLs.

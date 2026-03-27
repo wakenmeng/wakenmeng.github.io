@@ -1,10 +1,8 @@
 ---
-layout: post
 title: "Doom Emacs: org-present is Actually org-tree-slide"
 date: 2022-06-29
 author: Waken
 tags: [emacs, doom-emacs, org-mode]
-comments: true
 ---
 
 Confused moment: Doom Emacs `org +present` module doesn't use the `org-present` package. It uses `org-tree-slide-mode` instead.

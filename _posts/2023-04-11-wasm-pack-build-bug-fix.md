@@ -1,10 +1,8 @@
 ---
-layout: post
 title: "wasm-pack Build Bug: Use Version 0.9.1"
 date: 2023-04-11
 author: Waken
 tags: [rust, wasm, wasm-pack]
-comments: true
 ---
 
 Hit a build error with wasm-pack. Solution: downgrade to 0.9.1.

@@ -1,5 +1,4 @@
 ---
-layout: post
 title: "Benchmarking Token Bucket Rate Limiters"
 date: 2026-03-26
 author: Waken

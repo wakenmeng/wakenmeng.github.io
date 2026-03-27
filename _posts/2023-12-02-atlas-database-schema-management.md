@@ -1,10 +1,8 @@
 ---
-layout: post
 title: "Found a Good Database Migration Tool: Atlas"
 date: 2023-12-02
 author: Waken
 tags: [database, devops, migrations]
-comments: true
 ---
 
 Discovered [Atlas](https://atlasgo.io/) today. It's a database schema management tool that actually makes sense.

@@ -1,10 +1,8 @@
 ---
-layout: post
 title: "Extracting Timestamps from UUID v1 for Database Sharding"
 date: 2021-12-15
 author: Waken
 tags: [postgresql, uuid, sharding, database]
-comments: true
 ---
 
 UUID v1 embeds timestamps. Here's how to extract them in PostgreSQL for time-based sharding.

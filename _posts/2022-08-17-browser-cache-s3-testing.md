@@ -1,10 +1,8 @@
 ---
-layout: post
 title: "Browser Cache: Why S3 Policy Changes Don't Show Up"
 date: 2022-08-17
 author: Waken
 tags: [debugging, s3, http, caching]
-comments: true
 ---
 
 Spent an hour debugging why my S3 bucket policy changes weren't working. Turns out: browser cache.

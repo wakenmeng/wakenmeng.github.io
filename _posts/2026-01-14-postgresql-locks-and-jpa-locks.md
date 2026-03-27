@@ -1,10 +1,8 @@
 ---
-layout: post
 title: "PostgreSQL Locks & Spring JPA Locks"
 date: 2026-01-14
 author: Waken
 tags: [postgresql, database, concurrency, jpa, backend]
-comments: true
 ---
 
 I recently spent some focused time reading PostgreSQL’s concurrency and locking documentation, and then mapping that understanding to how locks actually work in Spring JPA / Hibernate.

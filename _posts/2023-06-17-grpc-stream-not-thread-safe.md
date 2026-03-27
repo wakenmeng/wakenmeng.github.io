@@ -1,10 +1,8 @@
 ---
-layout: post
 title: "gRPC Streams Are Not Thread-Safe"
 date: 2023-06-17
 author: Waken
 tags: [grpc, golang, concurrency]
-comments: true
 ---
 
 Hit a concurrency bug with gRPC streams. Turns out they're not thread-safe for concurrent writes.

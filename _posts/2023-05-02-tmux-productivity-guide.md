@@ -1,10 +1,8 @@
 ---
-layout: post
 title: "Tmux: Terminal Sessions That Persist"
 date: 2023-05-02
 author: Waken
 tags: [tmux, terminal, productivity]
-comments: true
 ---
 
 Finally learned tmux properly. Game changer for remote work and managing multiple terminal sessions.

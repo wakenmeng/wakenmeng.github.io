@@ -1,10 +1,8 @@
 ---
-layout: post
 title: "My Go Project Starter Kit"
 date: 2022-07-22
 author: Waken
 tags: [golang, tools, project-setup]
-comments: true
 ---
 
 Been thinking about my default Go project setup. Here's what I'm settling on.

@@ -1,10 +1,8 @@
 ---
-layout: post
 title: "chromedp: Creating Multiple Browser Instances"
 date: 2023-06-02
 author: Waken
 tags: [golang, chromedp, chrome, automation]
-comments: true
 ---
 
 Hit an issue creating multiple Chrome browser instances with chromedp in Go. Same user data directory was the problem.

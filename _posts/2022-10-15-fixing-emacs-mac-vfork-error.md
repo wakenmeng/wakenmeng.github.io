@@ -1,10 +1,8 @@
 ---
-layout: post
 title: "Fixing Emacs-mac 'file-missing doing vfork' Error"
 date: 2022-10-15
 author: Waken
 tags: [emacs, debugging, doom-emacs]
-comments: true
 ---
 
 Emacs suddenly started throwing `file-missing doing vfork` errors on startup. Turned out to be an emacs-sqlite compilation issue.

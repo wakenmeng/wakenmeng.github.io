@@ -1,10 +1,8 @@
 ---
-layout: post
 title: "Rust: Stop Using mod.rs"
 date: 2022-10-08
 author: Waken
 tags: [rust, conventions]
-comments: true
 ---
 
 Learned that `mod.rs` files are the old way. Rust 1.30+ has a better convention.

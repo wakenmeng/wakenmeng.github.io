@@ -1,10 +1,8 @@
 ---
-layout: post
 title: "cargo-expand: See What Rust Macros Actually Generate"
 date: 2022-10-08
 author: Waken
 tags: [rust, macros, debugging]
-comments: true
 ---
 
 Debugging Rust macros is painful. Compiler errors point to the macro invocation, not what it generates. `cargo-expand` fixes that.

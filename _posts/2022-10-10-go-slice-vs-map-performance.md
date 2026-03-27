@@ -1,10 +1,8 @@
 ---
-layout: post
 title: "Go: Slices Can Be Faster Than Maps for Small Collections"
 date: 2022-10-10
 author: Waken
 tags: [golang, performance]
-comments: true
 ---
 
 Found an interesting article about [Go slice search vs map lookup performance](https://darkcoding.net/software/go-slice-search-vs-map-lookup/). The TLDR surprised me.

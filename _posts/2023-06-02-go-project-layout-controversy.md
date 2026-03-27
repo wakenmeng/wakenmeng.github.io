@@ -1,10 +1,8 @@
 ---
-layout: post
 title: "Go Project Layout: The Controversy"
 date: 2023-06-02
 author: Waken
 tags: [golang, project-structure, best-practices]
-comments: true
 ---
 
 Was researching Go project layouts. Found an interesting debate about golang-standards/project-layout.

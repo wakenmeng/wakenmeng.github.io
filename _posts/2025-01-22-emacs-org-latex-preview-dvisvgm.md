@@ -1,10 +1,8 @@
 ---
-layout: post
 title: "Emacs Org Mode: Sharp LaTeX Previews with dvisvgm"
 date: 2025-01-22
 author: Waken
 tags: [emacs, org-mode, latex, dvisvgm]
-comments: true
 ---
 
 Switched Emacs Org mode LaTeX previews from ImageMagick to dvisvgm. Much sharper results.

@@ -1,10 +1,8 @@
 ---
-layout: post
 title: "Profiling Slow Emacs Startup"
 date: 2022-09-09
 author: Waken
 tags: [emacs, performance, debugging]
-comments: true
 ---
 
 Emacs was taking forever to start. Found the built-in profiler to track down the culprit.

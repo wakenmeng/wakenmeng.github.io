@@ -1,10 +1,8 @@
 ---
-layout: post
 title: "Rust Traits: What I Wish I Knew Earlier"
 date: 2023-04-10
 author: Waken
 tags: [rust, traits]
-comments: true
 ---
 
 Spent the day figuring out Rust traits. Here's the mental model that finally clicked for me.

@@ -1,10 +1,8 @@
 ---
-layout: post
 title: Why Cannot Close a Go Channel Twice
 date: 2026-02-04
 Author: Waken
 tags: [go]
-comments: true
 toc: true
 ---
 

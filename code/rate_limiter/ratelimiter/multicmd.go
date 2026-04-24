@@ -11,14 +11,14 @@ import (
 )
 
 type MultiCmdImpl struct {
-	rdb     *redis.Client
+	rdb     redis.UniversalClient
 	callCnt atomic.Int64
 }
 
-func InitMultiCmdImpl(ctx context.Context, redisAddr string) (*MultiCmdImpl, error) {
-	rdb := redis.NewClient(&redis.Options{Addr: redisAddr})
-	if err := rdb.Ping(ctx).Err(); err != nil {
-		return nil, fmt.Errorf("failed to call redis.Ping: %w", err)
+func InitMultiCmdImpl(ctx context.Context, redisAddrs []string) (*MultiCmdImpl, error) {
+	rdb, err := newRedisClient(ctx, redisAddrs)
+	if err != nil {
+		return nil, fmt.Errorf("failed to connect redis: %w", err)
 	}
 	return &MultiCmdImpl{rdb: rdb}, nil
 }
@@ -66,7 +66,7 @@ func (m *MultiCmdImpl) Allow(ctx context.Context, key string, nowMs int64, conf 
 	}
 
 	m.callCnt.Add(1)
-	if err := m.rdb.Expire(ctx, key, time.Duration(conf.TtlMs)*time.Millisecond).Err(); err != nil {
+	if err := m.rdb.Expire(ctx, key, time.Duration(conf.TTLMs)*time.Millisecond).Err(); err != nil {
 		return false, fmt.Errorf("failed to rdb.Expire: %w", err)
 	}
 	return allowed, nil

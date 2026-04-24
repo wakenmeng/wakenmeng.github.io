@@ -6,7 +6,7 @@ type Config struct {
 	Burst   int64
 	RateSec int64
 	Cost    int64
-	TtlMs   int64
+	TTLMs   int64
 }
 
 type Impl interface {
@@ -16,18 +16,28 @@ type Impl interface {
 	Teardown()
 }
 
-func InitAll(ctx context.Context, redisAddr string) ([]Impl, error) {
-	luaI, err := InitLuaImpl(ctx, redisAddr)
+func InitAll(ctx context.Context, redisAddrs []string) ([]Impl, error) {
+	luaI, err := InitLuaImpl(ctx, redisAddrs)
 	if err != nil {
 		return nil, err
 	}
-	mulI, err := InitMultiCmdImpl(ctx, redisAddr)
+	mulI, err := InitMultiCmdImpl(ctx, redisAddrs)
 	if err != nil {
 		return nil, err
 	}
-	watI, err := InitWatchImpl(ctx, redisAddr)
+	watI, err := InitWatchImpl(ctx, redisAddrs)
 	if err != nil {
 		return nil, err
 	}
-	return []Impl{luaI, mulI, watI}, nil
+	luaSrvI, err := InitLuaServerTimeImpl(ctx, redisAddrs)
+	if err != nil {
+		return nil, err
+	}
+
+	twoI, err := InitTwoTierImpl(ctx, redisAddrs, 100)
+	if err != nil {
+		return nil, err
+	}
+
+	return []Impl{luaI, mulI, watI, luaSrvI, twoI}, nil
 }

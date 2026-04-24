@@ -9,25 +9,24 @@ import (
 	"github.com/redis/go-redis/v9"
 )
 
-type LuaImpl struct {
+type LuaServerTimeImpl struct {
 	rdb       redis.UniversalClient
 	scriptSha string
 	callCnt   atomic.Int64
 }
 
-func InitLuaImpl(ctx context.Context, redisAddrs []string) (*LuaImpl, error) {
+func InitLuaServerTimeImpl(ctx context.Context, redisAddrs []string) (impl *LuaServerTimeImpl, err error) {
 	rdb, err := newRedisClient(ctx, redisAddrs)
 	if err != nil {
 		return nil, fmt.Errorf("failed to connect redis: %w", err)
 	}
 
-	bts, err := os.ReadFile("../tokenbucket.lua")
+	bts, err := os.ReadFile("../tokenbucket_servertime.lua")
 	if err != nil {
-		return nil, fmt.Errorf("failed to read ../tokenbucket.lua: %w", err)
+		return nil, fmt.Errorf("failed to read ../tokenbucket_servertime.lua: %w", err)
 	}
 	script := string(bts)
 	scriptSha := redis.NewScript(script).Hash()
-
 	switch c := rdb.(type) {
 	case *redis.Client:
 		_, err = rdb.ScriptLoad(ctx, script).Result()
@@ -40,24 +39,24 @@ func InitLuaImpl(ctx context.Context, redisAddrs []string) (*LuaImpl, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to ScriptLoad: %w", err)
 	}
-
-	return &LuaImpl{
+	return &LuaServerTimeImpl{
 		rdb:       rdb,
 		scriptSha: scriptSha,
 	}, nil
 }
 
-func (l *LuaImpl) Name() string {
-	return "LuaEvalSha"
+func (l *LuaServerTimeImpl) Name() string {
+	return "LuaServerTimeImpl"
 }
 
-func (l *LuaImpl) Teardown() {
+func (l *LuaServerTimeImpl) Teardown() {
 	l.rdb.Close()
 }
 
-func (l *LuaImpl) Allow(ctx context.Context, key string, nowMs int64, conf Config) (bool, error) {
+func (l *LuaServerTimeImpl) Allow(ctx context.Context, key string, _ int64, conf Config) (allowed bool, err error) {
 	l.callCnt.Add(1)
-	res, err := l.rdb.EvalSha(ctx, l.scriptSha, []string{key}, nowMs, conf.RateSec, conf.Burst, conf.Cost, conf.TTLMs).Result()
+	res, err := l.rdb.EvalSha(ctx, l.scriptSha, []string{key},
+		conf.RateSec, conf.Burst, conf.Cost, conf.TTLMs).Result()
 	if err != nil {
 		return false, err
 	}
@@ -66,9 +65,9 @@ func (l *LuaImpl) Allow(ctx context.Context, key string, nowMs int64, conf Confi
 		return false, fmt.Errorf("failed to convert rdb.EvalSha result to []any")
 	}
 	return arr[0] == int64(1), nil
+
 }
 
-func (l *LuaImpl) RedisCalls() int64 {
+func (l *LuaServerTimeImpl) RedisCalls() int64 {
 	return l.callCnt.Load()
-
 }

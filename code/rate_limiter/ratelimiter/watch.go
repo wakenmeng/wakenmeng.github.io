@@ -11,14 +11,14 @@ import (
 )
 
 type WatchImpl struct {
-	rdb     *redis.Client
+	rdb     redis.UniversalClient
 	callCnt atomic.Int64
 }
 
-func InitWatchImpl(ctx context.Context, redisAddr string) (*WatchImpl, error) {
-	rdb := redis.NewClient(&redis.Options{Addr: redisAddr})
-	if err := rdb.Ping(ctx).Err(); err != nil {
-		return nil, fmt.Errorf("failed to call redis.Ping: %w", err)
+func InitWatchImpl(ctx context.Context, redisAddrs []string) (*WatchImpl, error) {
+	rdb, err := newRedisClient(ctx, redisAddrs)
+	if err != nil {
+		return nil, err
 	}
 	return &WatchImpl{rdb: rdb}, nil
 }
@@ -80,7 +80,7 @@ func (w *WatchImpl) watchAllow(ctx context.Context, key string,
 func (w *WatchImpl) Allow(ctx context.Context, key string,
 	nowMs int64, conf Config) (bool, error) {
 	for range 20 {
-		allowed, err := w.watchAllow(ctx, key, nowMs, conf.Burst, conf.RateSec, conf.Cost, conf.TtlMs)
+		allowed, err := w.watchAllow(ctx, key, nowMs, conf.Burst, conf.RateSec, conf.Cost, conf.TTLMs)
 		if err == nil {
 			return allowed, nil
 		}

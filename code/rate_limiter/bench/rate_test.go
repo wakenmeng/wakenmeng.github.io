@@ -2,7 +2,10 @@ package bench
 
 import (
 	"context"
+	"flag"
 	"fmt"
+	"log"
+	"os"
 	"sync"
 	"sync/atomic"
 	"testing"
@@ -12,38 +15,76 @@ import (
 	rl "waken.dev/blog/code/lua_redis/ratelimiter"
 )
 
-const REDIS_ADDR = "localhost:6379"
+var (
+	useCluster = flag.Bool("cluster", false, "use redis cluster")
+
+	singleRedisAddrs  = []string{"localhost:6379"}
+	clusterRedisAddrs = []string{"localhost:7001", "localhost:7002", "localhost:7003",
+		"localhost:7004", "localhost:7005", "localhost:7006"}
+
+	testImpls []rl.Impl
+
+	flushClient redis.UniversalClient
+)
+
+func TestMain(m *testing.M) {
+	ctx := context.Background()
+	var err error
+
+	flag.Parse()
+	redisAddrs := singleRedisAddrs
+	if *useCluster {
+		redisAddrs = clusterRedisAddrs
+	}
+
+	testImpls, err = rl.InitAll(ctx, redisAddrs)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	flushClient = redis.NewUniversalClient(&redis.UniversalOptions{Addrs: redisAddrs})
+
+	code := m.Run()
+	for _, impl := range testImpls {
+		impl.Teardown()
+	}
+	flushClient.Close()
+	os.Exit(code)
+}
 
 var defaultConf = rl.Config{
 	Burst:   1000,
 	RateSec: 500,
 	Cost:    1,
-	TtlMs:   1000 * 60 * 60 * 24, // 24 hrs
+	TTLMs:   1000 * 60 * 60 * 24, // 24 hrs
 }
 
 func BenchmarkRateLimiter(b *testing.B) {
 	ctx := context.Background()
-	impls, err := rl.InitAll(ctx, REDIS_ADDR)
-	if err != nil {
-		b.Fatal(err)
-	}
 	scenarios := []struct {
-		name  string
-		keyFn func(goroutineID int64) string
+		name     string
+		keyFn    func(goroutineID int64) string
+		keyCount func(goroutineCount int64) int64
 	}{
-		{"hot_key", func(gid int64) string { return "rate:hot" }},
-		{"per_user", func(gid int64) string { return fmt.Sprintf("rate:user:%d", gid) }},
+		{
+			"hot_key",
+			func(gid int64) string { return "rate:hot" },
+			func(gcnt int64) int64 { return 1 },
+		},
+		{
+			"per_user",
+			func(gid int64) string { return fmt.Sprintf("rate:user:%d", gid) },
+			func(gcnt int64) int64 { return gcnt },
+		},
 	}
 	concurrency := []int{1, 16, 64, 256}
 
-	rdb := redis.NewClient(&redis.Options{Addr: REDIS_ADDR})
-	defer rdb.Close()
-
-	for _, im := range impls {
+	for _, im := range testImpls {
 		for _, sc := range scenarios {
 			for _, conc := range concurrency {
 				b.Run(fmt.Sprintf("%s/%s/con_%d", im.Name(), sc.name, conc), func(b *testing.B) {
-					_ = rdb.FlushDB(ctx).Err()
+					flushAll(ctx, flushClient)
+					b.ResetTimer()
 
 					var totalCnt, allowedCnt atomic.Int64
 					callsBefore := im.RedisCalls()
@@ -71,16 +112,16 @@ func BenchmarkRateLimiter(b *testing.B) {
 						b.ReportMetric(float64(callsDelta)/float64(total), "redis_calls/req")
 					}
 
-					theoreticalMax := defaultConf.Burst + defaultConf.RateSec*int64(elapsed.Seconds())
+					numKeys := sc.keyCount(gidGen.Load())
+					theoreticalMax := numKeys * (defaultConf.Burst + defaultConf.RateSec*elapsed.Milliseconds()/1000)
 					if theoreticalMax > 0 {
-						overGrant := float64(allowed-theoreticalMax) / float64(theoreticalMax) * 100
-						b.ReportMetric(overGrant, "over_grant_%")
+						util := float64(allowed) / float64(theoreticalMax) * 100
+						b.ReportMetric(util, "util_%")
 					}
 					b.ReportMetric(float64(allowed), "allowed_total")
 				})
 			}
 		}
-		im.Teardown()
 	}
 }
 
@@ -90,26 +131,15 @@ func TestOverGrant(t *testing.T) {
 		Burst:   10,
 		RateSec: 10,
 		Cost:    1,
-		TtlMs:   60_000,
+		TTLMs:   60_000,
 	}
 	theoreticalMax := conf.Burst + conf.RateSec*int64(testSecs)
 	conc := 64
+	ctx := context.Background()
 
-	impls, err := rl.InitAll(context.Background(), REDIS_ADDR)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	rdb := redis.NewClient(&redis.Options{Addr: REDIS_ADDR})
-	if err := rdb.Ping(context.Background()).Err(); err != nil {
-		t.Fatal(err)
-	}
-
-	for _, im := range impls {
+	for _, im := range testImpls {
 		key := fmt.Sprintf("test:hot:og:%s", im.Name())
-		if err := rdb.Del(context.Background(), key).Err(); err != nil {
-			t.Fatal(err)
-		}
+		flushAll(ctx, flushClient)
 		var totalCnt, allowedCnt, errCnt atomic.Int64
 		var wg sync.WaitGroup
 		wg.Add(conc)

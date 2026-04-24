@@ -164,7 +164,7 @@ Note `ts = math.max(now, ts)`. This prevents timestamp regression when multiple 
 ```go
 func (l *LuaImpl) Allow(ctx context.Context, key string, nowMs int64, conf Config) (bool, error) {
     res, err := l.rdb.EvalSha(ctx, l.scriptSha, []string{key},
-        nowMs, conf.RateSec, conf.Burst, conf.Cost, conf.TtlMs).Result()
+        nowMs, conf.RateSec, conf.Burst, conf.Cost, conf.TTLMs).Result()
     if err != nil {
         return false, err
     }
@@ -196,7 +196,7 @@ func (m *MultiCmdImpl) Allow(ctx context.Context, key string, nowMs int64, conf 
     m.rdb.HMSet(ctx, key, "tokens", max(tokens-conf.Cost, 0), "ts", nowMs)
 
     // 4. EXPIRE
-    m.rdb.Expire(ctx, key, time.Duration(conf.TtlMs)*time.Millisecond)
+    m.rdb.Expire(ctx, key, time.Duration(conf.TTLMs)*time.Millisecond)
     return allowed, nil
 }
 ```

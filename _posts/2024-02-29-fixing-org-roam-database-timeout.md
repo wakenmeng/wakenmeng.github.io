@@ -422,6 +422,5 @@ If you're still on Emacs 28 or earlier, consider upgrading—Emacs 29 brings man
 - [Org-roam Manual](https://www.orgroam.com/manual.html)
 - [Emacs 29 NEWS](https://git.savannah.gnu.org/cgit/emacs.git/tree/etc/NEWS.29)
 - [emacsql Documentation](https://github.com/magit/emacsql)
-- [My Org-roam Config](https://github.com/yourusername/dotfiles)
 
 Happy note-taking! 📝

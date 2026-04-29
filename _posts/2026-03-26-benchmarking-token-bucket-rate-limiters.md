@@ -102,7 +102,7 @@ res, err := rdb.EvalSha(ctx, sha, []string{key}, args...).Result()
 
 ## Token Bucket in Lua
 
-I covered the [token bucket algorithm in a previous post](/2022/07/27/rate-limiting-algorithms). The short version: a bucket holds tokens that refill at a constant rate. Each request consumes a token. When the bucket is empty, requests are rejected until tokens refill.
+I covered the [token bucket algorithm in a previous post](/posts/rate-limiting-algorithms/). The short version: a bucket holds tokens that refill at a constant rate. Each request consumes a token. When the bucket is empty, requests are rejected until tokens refill.
 
 Here's the full Lua implementation. The client passes in the current timestamp, rate, burst capacity, cost per request, and a TTL for the key.
 
@@ -331,4 +331,4 @@ At 64+ goroutines on one key, each request averages ~50 Redis calls (about 16 re
 
 The Lua approach wins on both performance and correctness, but there's a catch we haven't fully explored: the client supplies the `now` timestamp. In a distributed system with multiple servers, clock skew and network latency can cause the timestamps to arrive out of order — which is exactly the bug we fixed with `math.max(now, ts)`. But is that fix sufficient? In the next post, I'll dig into clock skew, network delay, and whether using server-side `redis.call('TIME')` is a better approach.
 
-*All benchmarks run on Apple M3 Pro, local Redis 7, Go 1.25. Source code: [code/rate_limiter](https://github.com/user/blog/tree/main/code/rate_limiter)*
+*All benchmarks run on Apple M3 Pro, local Redis 7, Go 1.25. Source code: [code/rate_limiter](https://github.com/wakenmeng/wakenmeng.github.io/tree/main/code/rate_limiter)*

@@ -6,7 +6,7 @@ tags: [redis, lua, backend, ratelimit, golang, benchmark, distributed]
 toc: true
 ---
 
-Last week I [benchmarked three token-bucket implementations](/2026/03/26/benchmarking-token-bucket-rate-limiters) and crowned Lua+EvalSha the winner at ~66K ops/sec on a single Redis node. That was the floor. This post walks from there to **1.7M ops/sec** on the same laptop — and the bugs I broke along the way.
+Last week I [benchmarked three token-bucket implementations](/posts/benchmarking-token-bucket-rate-limiters) and crowned Lua+EvalSha the winner at ~66K ops/sec on a single Redis node. That was the floor. This post walks from there to **1.7M ops/sec** on the same laptop — and the bugs I broke along the way.
 <!-- more -->
 
 ## The 1M Journey
@@ -44,7 +44,7 @@ TwoTier wins by **~10×** throughput on `per_user`, and (after a second round of
 
 **Slow path (mutex):** on miss, a single goroutine per key holds a lock, double-checks the counter, then asks Redis for `batchSize` tokens at once via a modified Lua (`borrow` instead of `allow`). The borrowed tokens become local capacity; subsequent requests drain them atomically.
 
-Key code: [twotier.go:58](code/rate_limiter/ratelimiter/twotier.go:58)
+Key code: [twotier.go](https://github.com/wakenmeng/wakenmeng.github.io/blob/main/code/rate_limiter/ratelimiter/twotier.go)
 
 ```go
 func (t *TwoTierImpl) Allow(ctx context.Context, key string, nowMs int64, config Config) (bool, error) {
@@ -86,7 +86,7 @@ func (t *TwoTierImpl) Allow(ctx context.Context, key string, nowMs int64, config
 }
 ```
 
-The Lua script — [tokenbucket_servertime_borrow.lua](code/rate_limiter/tokenbucket_servertime_borrow.lua) — is nearly identical to the `allow` version, except it returns `{borrowed, retry_ms}` instead of a boolean: `borrowed = min(tokens, need)` milli-tokens, plus the estimated ms until another token is available. The caller takes what it can get, and uses the estimate to avoid hitting Redis during the cooldown.
+The Lua script — [tokenbucket_servertime_borrow.lua](https://github.com/wakenmeng/wakenmeng.github.io/blob/main/code/rate_limiter/tokenbucket_servertime_borrow.lua) — is nearly identical to the `allow` version, except it returns `{borrowed, retry_ms}` instead of a boolean: `borrowed = min(tokens, need)` milli-tokens, plus the estimated ms until another token is available. The caller takes what it can get, and uses the estimate to avoid hitting Redis during the cooldown.
 
 Four things worth pausing on:
 
@@ -122,7 +122,7 @@ Redis's Lua runtime returns floats, but `go-redis` converts them to `int64` by *
 
 LuaServerTime avoided this because it returns an *integer* pair `{allowed, retry_after_ms}` — the fractional tokens stay inside Redis, never crossing the language boundary.
 
-**The fix: scale everything to milli-tokens.** 1 token = 1000 milli-tokens. Rate, burst, cost, and all returns are integers. [tokenbucket_servertime_borrow.lua:7-10](code/rate_limiter/tokenbucket_servertime_borrow.lua:7):
+**The fix: scale everything to milli-tokens.** 1 token = 1000 milli-tokens. Rate, burst, cost, and all returns are integers. [tokenbucket_servertime_borrow.lua](https://github.com/wakenmeng/wakenmeng.github.io/blob/main/code/rate_limiter/tokenbucket_servertime_borrow.lua#L7-L10):
 
 ```lua
 local need  = tonumber(ARGV[1]) * 1000
@@ -130,7 +130,7 @@ local rate  = tonumber(ARGV[2]) * 1000
 local burst = tonumber(ARGV[3]) * 1000
 ```
 
-On the Go side, `lb.tokens` is an `atomic.Int64` of milli-tokens, and every `Add` uses `1000` as the unit ([twotier.go:62](code/rate_limiter/ratelimiter/twotier.go:62)). One request costs 1000 milli-tokens; `borrowed` comes back in milli-tokens; the leftover after a partial borrow is `lb.tokens.Add(borrowed)` — milli-tokens accumulate locally and eventually round up to a whole request.
+On the Go side, `lb.tokens` is an `atomic.Int64` of milli-tokens, and every `Add` uses `1000` as the unit ([twotier.go](https://github.com/wakenmeng/wakenmeng.github.io/blob/main/code/rate_limiter/ratelimiter/twotier.go)). One request costs 1000 milli-tokens; `borrowed` comes back in milli-tokens; the leftover after a partial borrow is `lb.tokens.Add(borrowed)` — milli-tokens accumulate locally and eventually round up to a whole request.
 
 After the fix: `allowed=40`, exactly on target.
 
@@ -151,7 +151,7 @@ The whole point of local caching was to *avoid* Redis. Instead, TwoTier was **7�
 
 But here's the kicker: most of those queued goroutines are going to be **rejected** anyway (the bucket is empty, the borrow returns 0). If we already know rejection is the answer, the Redis round-trip is pure waste.
 
-**The fix: short-circuit rejections.** Let Redis tell us when a retry would be worth it, cache that deadline locally, and reject without a lock or an RTT until the deadline passes. [twotier.go:68](code/rate_limiter/ratelimiter/twotier.go:68):
+**The fix: short-circuit rejections.** Let Redis tell us when a retry would be worth it, cache that deadline locally, and reject without a lock or an RTT until the deadline passes. [twotier.go](https://github.com/wakenmeng/wakenmeng.github.io/blob/main/code/rate_limiter/ratelimiter/twotier.go):
 
 ```go
 // fast path
@@ -167,7 +167,7 @@ lb.mu.Lock()
 // ... borrow; if borrowed < 1000, compute and store nextRetryMs from Redis's reply
 ```
 
-The Lua script got an extra return value, `retry_ms` — "when Redis will next have at least 1 token available" — computed on the server side where all the state is ([tokenbucket_servertime_borrow.lua:36](code/rate_limiter/tokenbucket_servertime_borrow.lua:36)):
+The Lua script got an extra return value, `retry_ms` — "when Redis will next have at least 1 token available" — computed on the server side where all the state is ([tokenbucket_servertime_borrow.lua](https://github.com/wakenmeng/wakenmeng.github.io/blob/main/code/rate_limiter/tokenbucket_servertime_borrow.lua)):
 
 ```lua
 local retry_ms = 0
@@ -238,7 +238,7 @@ lb.tokens.Add(1000)
 
 Without the double-check, every goroutine behind the lock still fires its own borrow. With it, the first goroutine borrows, returns 100 tokens to `lb.tokens`, and the next 99 goroutines exit on the fast path inside the lock. Redis load drops by `batchSize`×.
 
-A related symptom: context cancellation errors. The test uses `context.WithTimeout`; when the context fires, goroutines queued behind the mutex eventually wake up, find `ctx.Err() != nil`, and return. That's expected — but I was counting them as failures. A bit of bookkeeping (check `ctx.Err()` first thing inside the lock, [twotier.go:70](code/rate_limiter/ratelimiter/twotier.go:70)) cleaned up the noise.
+A related symptom: context cancellation errors. The test uses `context.WithTimeout`; when the context fires, goroutines queued behind the mutex eventually wake up, find `ctx.Err() != nil`, and return. That's expected — but I was counting them as failures. A bit of bookkeeping (check `ctx.Err()` first thing inside the lock, [twotier.go](https://github.com/wakenmeng/wakenmeng.github.io/blob/main/code/rate_limiter/ratelimiter/twotier.go)) cleaned up the noise.
 
 **Lesson:** when your fast path is atomic and your slow path is a network call, the gap between them is where the stampede happens. Always double-check the atomic state after acquiring the lock.
 
@@ -258,7 +258,7 @@ theoreticalMax := defaultConf.Burst + defaultConf.RateSec*elapsed/1000
 
 For `hot_key` this is right. For `per_user` with N distinct keys, each key gets its own budget — so the actual max is `N × (burst + rate × elapsed)`. The original formula was off by a factor of `N` (the number of goroutines, i.e. 64 or 256).
 
-The fix added a `keyCount` function per scenario ([rate_test.go:67](code/rate_limiter/bench/rate_test.go:67)):
+The fix added a `keyCount` function per scenario ([rate_test.go](https://github.com/wakenmeng/wakenmeng.github.io/blob/main/code/rate_limiter/bench/rate_test.go)):
 
 ```go
 {"hot_key",  keyFn: ..., keyCount: func(gcnt int64) int64 { return 1 }},
@@ -277,7 +277,7 @@ Redis Cluster with 3 masters. My first run threw `NOSCRIPT` errors from 2 of the
 
 `rdb.ScriptLoad(ctx, script)` on a `redis.ClusterClient` sends the command to one node — in my case, whichever shard the internal dispatcher picked. The other two shards never received the script, so `EvalSha` failed for any key that hashed to them.
 
-The fix is `ForEachShard`, which is exactly the tool the cluster client gives you for this situation — [twotier.go:42](code/rate_limiter/ratelimiter/twotier.go:42):
+The fix is `ForEachShard`, which is exactly the tool the cluster client gives you for this situation — [twotier.go](https://github.com/wakenmeng/wakenmeng.github.io/blob/main/code/rate_limiter/ratelimiter/twotier.go):
 
 ```go
 switch c := rdb.(type) {
@@ -351,4 +351,4 @@ Two open fronts:
 1. **Algorithm diversity.** Token bucket is one shape. GCRA (Generic Cell Rate Algorithm), sliding-window counter, and sliding-window log all have different trade-offs around burst-shaping and state size. Next post: implementing and benchmarking GCRA against token bucket.
 2. **Actually deploying this.** Everything so far is a laptop benchmark. The next big step is a multi-node Go service behind a real load generator, with Prometheus/Grafana watching p99, Redis CPU, and hot-shard detection. The "1M ops/sec" number doesn't mean much until I can see it survive a shard failure and a cluster resize.
 
-*All benchmarks on Apple M3 Pro, Redis 7, Go 1.25, local 3-master/3-replica cluster. Source: [code/rate_limiter](code/rate_limiter).*
+*All benchmarks on Apple M3 Pro, Redis 7, Go 1.25, local 3-master/3-replica cluster. Source: [code/rate_limiter](https://github.com/wakenmeng/wakenmeng.github.io/tree/main/code/rate_limiter).*

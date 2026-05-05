@@ -1,12 +1,28 @@
 package ratelimiter
 
-import "context"
+import (
+	"context"
+	"fmt"
+)
 
 type Config struct {
 	Burst   int64
 	RateSec int64
 	Cost    int64
 	TTLMs   int64
+}
+
+func (c Config) Validate() error {
+	if c.Burst < 1 {
+		return fmt.Errorf("invalid config: burst must be >= 1, got %d", c.Burst)
+	}
+	if c.RateSec < 1 {
+		return fmt.Errorf("invalid config: rate must be >= 1, got %d", c.RateSec)
+	}
+	if c.Cost < 1 {
+		return fmt.Errorf("invalid config: cost must be >= 1, got %d", c.Cost)
+	}
+	return nil
 }
 
 type Impl interface {
@@ -39,5 +55,14 @@ func InitAll(ctx context.Context, redisAddrs []string) ([]Impl, error) {
 		return nil, err
 	}
 
-	return []Impl{luaI, mulI, watI, luaSrvI, twoI}, nil
+	gcraI, err := InitGCRAImpl(ctx, redisAddrs)
+	if err != nil {
+		return nil, err
+	}
+
+	swcI, err := InitSWCImpl(ctx, redisAddrs)
+	if err != nil {
+		return nil, err
+	}
+	return []Impl{luaI, mulI, watI, luaSrvI, twoI, gcraI, swcI}, nil
 }

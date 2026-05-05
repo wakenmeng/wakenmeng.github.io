@@ -3,7 +3,6 @@ package ratelimiter
 import (
 	"context"
 	"fmt"
-	"os"
 	"sync/atomic"
 
 	"github.com/redis/go-redis/v9"
@@ -21,21 +20,7 @@ func InitLuaServerTimeImpl(ctx context.Context, redisAddrs []string) (impl *LuaS
 		return nil, fmt.Errorf("failed to connect redis: %w", err)
 	}
 
-	bts, err := os.ReadFile("../tokenbucket_servertime.lua")
-	if err != nil {
-		return nil, fmt.Errorf("failed to read ../tokenbucket_servertime.lua: %w", err)
-	}
-	script := string(bts)
-	scriptSha := redis.NewScript(script).Hash()
-	switch c := rdb.(type) {
-	case *redis.Client:
-		_, err = rdb.ScriptLoad(ctx, script).Result()
-	case *redis.ClusterClient:
-		err = c.ForEachShard(ctx, func(ctx context.Context, shard *redis.Client) error {
-			_, err := shard.ScriptLoad(ctx, script).Result()
-			return err
-		})
-	}
+	scriptSha, err := redisLoadScript(ctx, rdb, "../tokenbucket_servertime.lua")
 	if err != nil {
 		return nil, fmt.Errorf("failed to ScriptLoad: %w", err)
 	}
@@ -54,6 +39,9 @@ func (l *LuaServerTimeImpl) Teardown() {
 }
 
 func (l *LuaServerTimeImpl) Allow(ctx context.Context, key string, _ int64, conf Config) (allowed bool, err error) {
+	if err := conf.Validate(); err != nil {
+		return false, err
+	}
 	l.callCnt.Add(1)
 	res, err := l.rdb.EvalSha(ctx, l.scriptSha, []string{key},
 		conf.RateSec, conf.Burst, conf.Cost, conf.TTLMs).Result()

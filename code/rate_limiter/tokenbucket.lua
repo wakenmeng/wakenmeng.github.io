@@ -7,10 +7,19 @@
 
 local key = KEYS[1]
 local now = tonumber(ARGV[1])
-local rate = tonumber(ARGV[2]) * 1000 -- 1 token = 1000 milli_tokens
-local burst = tonumber(ARGV[3]) * 1000
-local cost = tonumber(ARGV[4]) * 1000
+local rate = tonumber(ARGV[2])
+local burst = tonumber(ARGV[3])
+local cost = tonumber(ARGV[4])
 local ttl = tonumber(ARGV[5])
+
+if burst < 1 or rate < 1 or cost < 1 then
+  return redis.error_reply("invalid config: burst/rate/cost must be >= 1")
+end
+
+-- scale to milli-tokens to avoid float truncation in arithmetic
+rate = rate * 1000 -- 1 token = 1000 milli_tokens
+burst = burst * 1000
+cost = cost * 1000
 
 local tokens = redis.call("HGET", key, "tokens")
 local ts = redis.call("HGET", key, "ts")

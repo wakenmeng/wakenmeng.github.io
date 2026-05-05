@@ -32,6 +32,9 @@ func (m *MultiCmdImpl) Teardown() {
 }
 
 func (m *MultiCmdImpl) Allow(ctx context.Context, key string, nowMs int64, conf Config) (bool, error) {
+	if err := conf.Validate(); err != nil {
+		return false, err
+	}
 	m.callCnt.Add(1)
 	vals, err := m.rdb.HMGet(ctx, key, "tokens", "ts").Result()
 	if err != nil {

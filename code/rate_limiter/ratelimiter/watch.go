@@ -79,6 +79,9 @@ func (w *WatchImpl) watchAllow(ctx context.Context, key string,
 
 func (w *WatchImpl) Allow(ctx context.Context, key string,
 	nowMs int64, conf Config) (bool, error) {
+	if err := conf.Validate(); err != nil {
+		return false, err
+	}
 	for range 20 {
 		allowed, err := w.watchAllow(ctx, key, nowMs, conf.Burst, conf.RateSec, conf.Cost, conf.TTLMs)
 		if err == nil {

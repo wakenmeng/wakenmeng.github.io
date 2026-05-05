@@ -5,10 +5,19 @@
 -- ARGV[4] = ttl_ms (optional, can be 0)
 
 local key = KEYS[1]
-local rate = tonumber(ARGV[1]) * 1000 -- 1 token = 1000 milli tokens
-local burst = tonumber(ARGV[2]) * 1000
-local cost = tonumber(ARGV[3]) * 1000
+local rate = tonumber(ARGV[1])
+local burst = tonumber(ARGV[2])
+local cost = tonumber(ARGV[3])
 local ttl = tonumber(ARGV[4])
+
+if burst < 1 or rate < 1 or cost < 1 then
+  return redis.error_reply("invalid config: burst/rate/cost must be >= 1")
+end
+
+-- scale to milli-tokens
+rate = rate * 1000
+burst = burst * 1000
+cost = cost * 1000
 
 local t = redis.call("TIME") -- 1: unix timestamp 2: microsec eclapsed in current second
 local now = t[1] * 1000 + math.floor(t[2]/1000)
